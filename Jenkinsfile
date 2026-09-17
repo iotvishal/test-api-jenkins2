@@ -38,15 +38,19 @@ pipeline {
             }
         }
         stage('Health Check') {
-            steps {
-                sh '''
-                echo "===== WAIT FOR APPLICATION ====="
-                sleep 5
-                echo "===== HEALTH CHECK ====="
-                docker exec ${CONTAINER_NAME} python -c "import urllib.request, sys; print(urllib.request.urlopen('http://127.0.0.1:5000/').read().decode())"
-                '''
-            }
-        }
+    steps {
+        sh '''
+            echo "===== WAIT FOR APPLICATION ====="
+
+            sleep 5
+
+            echo "===== HEALTH CHECK ====="
+
+            docker exec ${CONTAINER_NAME} \
+                python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:5000/health').read().decode())"
+        '''
+    }
+}
     }
     post {
         success {
